@@ -12,7 +12,7 @@ const Avatar = ({ seed, large }: Props) => {
 
   return (
     <div
-      className={`relative h-10 w-10 overflow-hidden rounded-full border-gray-300 bg-white ${
+      className={`relative h-10 w-10 overflow-hidden rounded-full border-[1px] border-blue-50 bg-white ${
         large && "h-20 w-20"
       }`}
     >

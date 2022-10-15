@@ -1,15 +1,21 @@
-import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
+import toast from "react-hot-toast";
+import Timeago from "react-timeago";
+
 import { GET_POST_BY_POST_ID } from "../../graphql/queries";
 import { ADD_COMMENT } from "../../graphql/mutations";
 
+import { useMutation, useQuery } from "@apollo/client";
+
 import Post from "../../components/Post";
 import Avatar from "../../components/Avatar";
-import toast from "react-hot-toast";
-import Timeago from "react-timeago";
+
+type FormData = {
+  comment: string;
+};
 
 const PostPage = () => {
   const router = useRouter();

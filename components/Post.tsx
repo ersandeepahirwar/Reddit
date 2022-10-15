@@ -1,3 +1,4 @@
+import Link from "next/link";
 import TimeAgo from "react-timeago";
 
 import {
@@ -11,8 +12,6 @@ import {
 } from "@heroicons/react/outline";
 
 import { Jelly } from "@uiball/loaders";
-
-import Link from "next/link";
 
 import Avatar from "./Avatar";
 import { useSession } from "next-auth/react";

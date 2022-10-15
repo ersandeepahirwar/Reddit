@@ -1,17 +1,16 @@
+import toast from "react-hot-toast";
+
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@apollo/client";
-
-import toast from "react-hot-toast";
 
 import { LinkIcon, PhotographIcon } from "@heroicons/react/outline";
+import { useMutation } from "@apollo/client";
 
 import { ADD_POST, ADD_SUBREDDIT } from "../graphql/mutations";
 import { GET_ALL_POSTS, GET_SUBREDDIT_BY_TOPIC } from "../graphql/queries";
 
 import client from "../apollo-client";
-
 import Avatar from "./Avatar";
 
 type FormData = {
@@ -31,6 +30,7 @@ const Publisher = ({ subReddit }: Props) => {
   const [addPost] = useMutation(ADD_POST, {
     refetchQueries: [GET_ALL_POSTS, "getPostList"],
   });
+
   const [addSubreddit] = useMutation(ADD_SUBREDDIT);
 
   const [imageBoxOpen, setImageBoxOpen] = useState<boolean>();
@@ -45,7 +45,6 @@ const Publisher = ({ subReddit }: Props) => {
 
   const onSubmit = handleSubmit(async (formData) => {
     const notification = toast.loading("Publishing new post");
-
     try {
       const {
         data: { getSubredditListByTopic },
@@ -55,9 +54,7 @@ const Publisher = ({ subReddit }: Props) => {
           topic: subReddit || formData.subReddit,
         },
       });
-
       const subredditExists = getSubredditListByTopic.length > 0;
-
       if (!subredditExists) {
         const {
           data: { insertSubreddit: newSubreddit },
@@ -66,9 +63,7 @@ const Publisher = ({ subReddit }: Props) => {
             topic: formData.subReddit,
           },
         });
-
         const image = formData.postImage || "";
-
         const {
           data: { insertPost: newPost },
         } = await addPost({
@@ -82,7 +77,6 @@ const Publisher = ({ subReddit }: Props) => {
         });
       } else {
         const image = formData.postImage || "";
-
         const {
           data: { insertPost: newPost },
         } = await addPost({
@@ -95,12 +89,10 @@ const Publisher = ({ subReddit }: Props) => {
           },
         });
       }
-
       setValue("postTitle", "");
       setValue("postBody", "");
       setValue("subReddit", "");
       setValue("postImage", "");
-
       toast.success("New Post has been published!", {
         id: notification,
       });
@@ -114,11 +106,12 @@ const Publisher = ({ subReddit }: Props) => {
   return (
     <form
       onSubmit={onSubmit}
-      className="sticky top-16 z-50 rounded-md border border-gray-300 bg-white p-2"
+      className="sticky top-16 z-50 mx-auto flex w-[95vw] max-w-[400px] flex-col space-y-5 rounded-xl bg-white p-2 shadow-lg sm:max-w-[500px] md:max-w-[600px] md:p-5 lg:max-w-[700px] xl:max-w-[800px]"
     >
-      <div className="flex items-center space-x-3">
-        <Avatar />
-
+      <div className="flex flex-col space-y-3 md:flex-row md:items-center md:space-x-3 md:space-y-0">
+        <div className="flex justify-center">
+          <Avatar />
+        </div>
         <input
           {...register("postTitle", { required: true })}
           type="text"
@@ -130,68 +123,67 @@ const Publisher = ({ subReddit }: Props) => {
               : "Sign in to post"
           }
           disabled={!session}
-          className="flex-1 rounded-md bg-gray-50 p-2 pl-5 outline-none"
+          className="w-full  rounded-full border-none bg-blue-50 p-2 text-center text-[13px] outline-none md:w-auto md:flex-1"
         />
-
-        <PhotographIcon
-          onClick={() => setImageBoxOpen(!imageBoxOpen)}
-          className={`h-6 cursor-pointer text-gray-300 ${
-            imageBoxOpen && "text-blue-300"
-          }`}
-        />
-
-        <LinkIcon className="h-6 cursor-pointer text-gray-300" />
+        <div className="flex justify-center space-x-5 md:space-x-1">
+          <PhotographIcon
+            onClick={() => setImageBoxOpen(!imageBoxOpen)}
+            className={`h-6 cursor-pointer text-gray-500 ${
+              imageBoxOpen && "text-orange-500"
+            }`}
+          />
+          <LinkIcon className="h-6 cursor-pointer text-gray-500" />
+        </div>
       </div>
-
       {!!watch("postTitle") && (
-        <div className="flex flex-col py-2">
-          <div className="flex items-center px-2">
-            <p className="min-w-[90px]">Body</p>
+        <div className="flex flex-col space-y-5">
+          <div className="flex flex-col items-center space-y-2 md:flex-row md:space-y-0">
+            <p className="text-sm md:min-w-[90px]">Body</p>
             <input
               {...register("postBody")}
               type="text"
               placeholder="Text ( Optional )"
-              className="m-2 flex-1 bg-blue-50 p-2 outline-none"
+              className="w-full rounded-full border-none bg-blue-50 p-2 text-center text-[13px] outline-none md:w-auto md:flex-1"
             />
           </div>
-
           {!subReddit && (
-            <div className="flex items-center px-2">
-              <p className="min-w-[90px]">Subreddit</p>
+            <div className="flex flex-col items-center space-y-2 md:flex-row md:space-y-0">
+              <p className="text-sm md:min-w-[90px]">Subreddit</p>
               <input
                 {...register("subReddit", { required: true })}
                 type="text"
                 placeholder="i.e. next.js"
-                className="m-2 flex-1 bg-blue-50 p-2 outline-none"
+                className="w-full rounded-full border-none bg-blue-50 p-2 text-center text-[13px] outline-none md:w-auto md:flex-1"
               />
             </div>
           )}
-
           {imageBoxOpen && (
-            <div className="flex items-center px-2">
-              <p className="min-w-[90px]">Image URL</p>
+            <div className="flex flex-col items-center space-y-2 md:flex-row md:space-y-0">
+              <p className="text-sm md:min-w-[90px]">Image URL</p>
               <input
                 {...register("postImage")}
                 type="text"
                 placeholder="URL ( Optional )"
-                className="m-2 flex-1 bg-blue-50 p-2 outline-none"
+                className="w-full rounded-full border-none bg-blue-50 p-2 text-center text-[13px] outline-none md:w-auto md:flex-1"
               />
             </div>
           )}
-
           {Object.keys(errors).length > 0 && (
-            <div className="space-y-2 p-2 text-red-500">
+            <div className="flex justify-center">
               {errors.postTitle?.type === "required" && (
-                <p className="text-sm">A Post Title is required!</p>
+                <p className="text-[13px] text-orange-500">
+                  A Post Title is required!
+                </p>
               )}
               {errors.subReddit?.type === "required" && (
-                <p className="text-sm">A Subreddit is required!</p>
+                <p className="text-[13px] text-orange-500">
+                  A Subreddit is required!
+                </p>
               )}
             </div>
           )}
-
           {!!watch("postTitle") && (
-            <button className="w-full rounded-full bg-blue-400 p-2 text-white">
+            <button className="w-full rounded-full bg-orange-500 p-2 text-sm text-white">
               Create Post
             </button>
           )}
