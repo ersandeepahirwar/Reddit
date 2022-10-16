@@ -5,10 +5,10 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import Timeago from "react-timeago";
 
+import { useMutation, useQuery } from "@apollo/client";
+
 import { GET_POST_BY_POST_ID } from "../../graphql/queries";
 import { ADD_COMMENT } from "../../graphql/mutations";
-
-import { useMutation, useQuery } from "@apollo/client";
 
 import Post from "../../components/Post";
 import Avatar from "../../components/Avatar";
@@ -19,7 +19,9 @@ type FormData = {
 
 const PostPage = () => {
   const router = useRouter();
+
   const { data: session } = useSession();
+
   const [addComment] = useMutation(ADD_COMMENT, {
     refetchQueries: [GET_POST_BY_POST_ID, "getPostListByPostId"],
   });
@@ -35,7 +37,6 @@ const PostPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<FormData>();
@@ -59,21 +60,20 @@ const PostPage = () => {
   };
 
   return (
-    <div className="mx-auto my-7 max-w-5xl">
+    <div className="md:max-w-[600px my-5 mx-auto w-[95vw] max-w-[400px] sm:max-w-[500px] lg:max-w-[700px] xl:max-w-[800px]">
       <Post post={post} />
-      <div className="-mt-1 rounded-b-md border border-t-0 border-gray-300 bg-white p-5 pl-16">
-        <p className="text-sm">
-          Comment as <span className="text-red-500">{session?.user?.name}</span>
+      <div className="mt-2 space-y-2 rounded-xl bg-white p-2">
+        <p className="text-[13px]">
+          <span>Comment as&nbsp;</span>
+          <span className="font-[500] text-red-500">
+            @{session?.user?.name}
+          </span>
         </p>
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-2"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="">
           <textarea
             {...register("comment")}
             disabled={!session}
-            className="h-24 rounded-md border border-gray-200 p-2 pl-4 outline-none disabled:bg-gray-50"
+            className="h-20 w-full rounded-xl border border-red-500 p-2 text-[13px] outline-none disabled:bg-red-50"
             placeholder={
               session ? "What are your thoughts?" : "Please Sign in to comment!"
             }
@@ -81,31 +81,30 @@ const PostPage = () => {
           <button
             disabled={!session}
             type="submit"
-            className="rounded-full bg-red-500 p-3 font-semibold text-white disabled:bg-gray-200"
+            className="rounded-full bg-red-500 py-1 px-2 text-[13px] text-white disabled:bg-blue-200"
           >
             Comment
           </button>
         </form>
       </div>
-      <div className="my-5 rounded-b-md border border-t-0 border-gray-300 bg-white py-5 px-10">
-        <hr className="py-2" />
+      <div className="mt-2 rounded-xl bg-white">
         {post?.comments.map((comment) => (
           <div
-            className="relative flex items-center space-x-2 space-y-5"
+            className="relative flex items-center space-y-1 space-x-2 p-1"
             key={comment.id}
           >
-            <hr className="absolute top-10 left-7 z-0 h-16 border" />
             <div className="z-50">
               <Avatar seed={comment.username} />
             </div>
             <div className="flex flex-col">
-              <p className="py-2 text-xs text-gray-400">
-                <span className="font-semibold text-gray-600">
-                  {comment.username}&nbsp;&#8226;&nbsp;
-                  <Timeago date={comment.created_at} />
+              <p className="text-[13px]">
+                <span className="font-[500] text-red-500">
+                  @{comment.username}
                 </span>
+                <span className="text-gray-500">&nbsp;&#8226;&nbsp;</span>
+                <Timeago date={comment.created_at} className="text-gray-500" />
               </p>
-              <p>{comment.text}</p>
+              <p className="text-[13px]">{comment.text}</p>
             </div>
           </div>
         ))}

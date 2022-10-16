@@ -106,7 +106,7 @@ const Publisher = ({ subReddit }: Props) => {
   return (
     <form
       onSubmit={onSubmit}
-      className="sticky top-16 z-50 mx-auto flex w-[95vw] max-w-[400px] flex-col space-y-5 rounded-xl bg-white p-2 shadow-lg sm:max-w-[500px] md:max-w-[600px] md:p-5 lg:max-w-[700px] xl:max-w-[800px]"
+      className="sticky top-16 z-50 flex flex-col space-y-5 rounded-xl bg-white p-2 shadow-lg md:p-5"
     >
       <div className="flex flex-col space-y-3 md:flex-row md:items-center md:space-x-3 md:space-y-0">
         <div className="flex justify-center">
